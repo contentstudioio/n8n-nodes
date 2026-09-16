@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-contentstudio",
-  "version": "2.0.16",
+  "version": "2.0.17",
   "description": "n8n node for ContentStudio API (X-API-Key)",
   "keywords": [
     "n8n-community-node-package",
@@ -16,13 +16,13 @@
     "name": "contentstudio",
     "email": "support@contentstudio.io"
   },
-  "homepage": "https://github.com/d4interactive/n8n-nodes#readme",
+  "homepage": "https://github.com/contentstudioio/n8n-nodes#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/d4interactive/n8n-nodes.git"
+    "url": "git+https://github.com/contentstudioio/n8n-nodes.git"
   },
   "bugs": {
-    "url": "https://github.com/d4interactive/n8n-nodes/issues"
+    "url": "https://github.com/contentstudioio/n8n-nodes/issues"
   },
   "private": false,
   "publishConfig": {

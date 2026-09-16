@@ -118,7 +118,7 @@ Publishing to npm is automated via [.github/workflows/publish.yml](.github/workf
    ```
 
 4. The tag push triggers the workflow → builds, publishes `n8n-nodes-contentstudio@<version>` to npm with provenance.
-5. Watch progress at: https://github.com/d4interactive/n8n-nodes/actions
+5. Watch progress at: https://github.com/contentstudioio/n8n-nodes/actions
 
 ## License
 
