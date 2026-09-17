@@ -5,6 +5,7 @@ exports.normalizeBase = normalizeBase;
 exports.parseArray = parseArray;
 exports.parseAccounts = parseAccounts;
 exports.parseJsonObject = parseJsonObject;
+exports.parseJsonArray = parseJsonArray;
 exports.parseMaybeObject = parseMaybeObject;
 exports.parseCommaSeparated = parseCommaSeparated;
 exports.parseSchedulingEntityRefs = parseSchedulingEntityRefs;
@@ -61,6 +62,27 @@ function parseJsonObject(val, fieldLabel = 'Permissions') {
         }
     }
     return {};
+}
+// Coerce an n8n "json" field value (array or JSON string) into a plain array.
+function parseJsonArray(val, fieldLabel) {
+    if (val == null)
+        return [];
+    if (Array.isArray(val))
+        return val;
+    if (typeof val === 'string') {
+        const t = val.trim();
+        if (!t)
+            return [];
+        try {
+            const parsed = JSON.parse(t);
+            if (Array.isArray(parsed))
+                return parsed;
+        }
+        catch {
+            throw new Error(`${fieldLabel} must be a valid JSON array`);
+        }
+    }
+    throw new Error(`${fieldLabel} must be a valid JSON array`);
 }
 function parseMaybeObject(val) {
     const t = (val || '').trim();
