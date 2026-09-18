@@ -4,8 +4,8 @@ exports.ContentStudio = void 0;
 const n8n_workflow_1 = require("n8n-workflow");
 const loadOptions_1 = require("./loadOptions");
 const utils_1 = require("./utils");
-const ContentStudio_credentials_1 = require("../../credentials/ContentStudio.credentials");
-const CREDENTIALS_TYPE = 'contentStudio';
+const ContentStudioApi_credentials_1 = require("../../credentials/ContentStudioApi.credentials");
+const CREDENTIALS_TYPE = 'contentStudioApi';
 function createThreadOptionsSection(enableName, displayName, optionsName, collectionName, useMediaList = false) {
     return [
         {
@@ -162,7 +162,8 @@ class ContentStudio {
             subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
             inputs: [n8n_workflow_1.NodeConnectionTypes.Main],
             outputs: [n8n_workflow_1.NodeConnectionTypes.Main],
-            credentials: [{ name: 'contentStudio', required: true }],
+            credentials: [{ name: 'contentStudioApi', required: true }],
+            usableAsTool: true,
             properties: [
                 // Resource selector
                 {
@@ -2018,7 +2019,7 @@ class ContentStudio {
             try {
                 const resource = this.getNodeParameter('resource', i);
                 const operation = this.getNodeParameter('operation', i);
-                const baseRoot = (0, utils_1.normalizeBase)(ContentStudio_credentials_1.BASE_URL);
+                const baseRoot = (0, utils_1.normalizeBase)(ContentStudioApi_credentials_1.BASE_URL);
                 // Set by operations that reshape the API payload into multiple output items
                 let transformResponse;
                 // Base request options
@@ -2055,7 +2056,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const prompt = this.getNodeParameter('aiImagePrompt', i) || '';
                     if (!prompt)
-                        throw new Error('Prompt is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Prompt is required', { itemIndex: i });
                     const imageUrl = this.getNodeParameter('aiImageImageUrl', i) || '';
                     const model = this.getNodeParameter('aiImageModel', i) || '';
                     const useBrand = this.getNodeParameter('aiImageUseBrand', i);
@@ -2083,11 +2084,11 @@ class ContentStudio {
                     if (toolKey === 'image-to-image') {
                         const prompt = this.getNodeParameter('aiImageToolPrompt', i) || '';
                         if (!prompt)
-                            throw new Error('Prompt is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Prompt is required for this tool', { itemIndex: i });
                         const attachmentsRaw = this.getNodeParameter('aiImageToolAttachments', i) || '';
                         const attachments = (0, utils_1.parseCommaSeparated)(attachmentsRaw);
                         if (attachments.length === 0)
-                            throw new Error('At least one attachment URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'At least one attachment URL is required for this tool', { itemIndex: i });
                         body.prompt = prompt;
                         body.attachments = attachments;
                         const model = this.getNodeParameter('aiImageToolModel', i) || '';
@@ -2100,7 +2101,7 @@ class ContentStudio {
                     if (toolKey === 'remove-background' || toolKey === 'upscale' || toolKey === 'headshot') {
                         const imageUrl = this.getNodeParameter('aiImageToolImageUrl', i) || '';
                         if (!imageUrl)
-                            throw new Error('Image URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Image URL is required for this tool', { itemIndex: i });
                         body.image_url = imageUrl;
                     }
                     if (toolKey === 'upscale' || toolKey === 'headshot' || toolKey === 'face-swap' || toolKey === 'product-image') {
@@ -2116,27 +2117,27 @@ class ContentStudio {
                     if (toolKey === 'face-swap') {
                         const targetImageUrl = this.getNodeParameter('aiImageToolTargetImageUrl', i) || '';
                         if (!targetImageUrl)
-                            throw new Error('Target Image URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Target Image URL is required for this tool', { itemIndex: i });
                         const faceImageUrl = this.getNodeParameter('aiImageToolFaceImageUrl', i) || '';
                         if (!faceImageUrl)
-                            throw new Error('Face Image URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Face Image URL is required for this tool', { itemIndex: i });
                         body.target_image_url = targetImageUrl;
                         body.face_image_url = faceImageUrl;
                     }
                     if (toolKey === 'outfit-swap') {
                         const targetImageUrl = this.getNodeParameter('aiImageToolTargetImageUrl', i) || '';
                         if (!targetImageUrl)
-                            throw new Error('Target Image URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Target Image URL is required for this tool', { itemIndex: i });
                         const outfitImageUrl = this.getNodeParameter('aiImageToolOutfitImageUrl', i) || '';
                         if (!outfitImageUrl)
-                            throw new Error('Outfit Image URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Outfit Image URL is required for this tool', { itemIndex: i });
                         body.target_image_url = targetImageUrl;
                         body.outfit_image_url = outfitImageUrl;
                     }
                     if (toolKey === 'product-image') {
                         const productImageUrl = this.getNodeParameter('aiImageToolProductImageUrl', i) || '';
                         if (!productImageUrl)
-                            throw new Error('Product Image URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Product Image URL is required for this tool', { itemIndex: i });
                         body.product_image_url = productImageUrl;
                         const referenceImageUrl = this.getNodeParameter('aiImageToolReferenceImageUrl', i) || '';
                         if (referenceImageUrl)
@@ -2191,7 +2192,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const prompt = this.getNodeParameter('aiVideoPrompt', i) || '';
                     if (!prompt)
-                        throw new Error('Prompt is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Prompt is required', { itemIndex: i });
                     const imageUrl = this.getNodeParameter('aiVideoImageUrl', i) || '';
                     const referenceImageUrlsRaw = this.getNodeParameter('aiVideoReferenceImageUrls', i) || '';
                     const model = this.getNodeParameter('aiVideoModel', i) || '';
@@ -2205,7 +2206,7 @@ class ContentStudio {
                     const body = { prompt };
                     const referenceImageUrls = (0, utils_1.parseCommaSeparated)(referenceImageUrlsRaw);
                     if (imageUrl && referenceImageUrls.length > 0) {
-                        throw new Error('Image URL and Reference Image URLs are mutually exclusive');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Image URL and Reference Image URLs are mutually exclusive', { itemIndex: i });
                     }
                     if (imageUrl)
                         body.image_url = imageUrl;
@@ -2238,19 +2239,19 @@ class ContentStudio {
                     if (toolKey === 'motion-control' || toolKey === 'talking-avatar') {
                         const imageUrl = this.getNodeParameter('aiVideoToolImageUrl', i) || '';
                         if (!imageUrl)
-                            throw new Error('Image URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Image URL is required for this tool', { itemIndex: i });
                         body.image_url = imageUrl;
                     }
                     if (toolKey === 'motion-control' || toolKey === 'lip-sync') {
                         const videoUrl = this.getNodeParameter('aiVideoToolVideoUrl', i) || '';
                         if (!videoUrl)
-                            throw new Error('Video URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Video URL is required for this tool', { itemIndex: i });
                         body.video_url = videoUrl;
                     }
                     if (toolKey === 'lip-sync' || toolKey === 'talking-avatar') {
                         const audioUrl = this.getNodeParameter('aiVideoToolAudioUrl', i) || '';
                         if (!audioUrl)
-                            throw new Error('Audio URL is required for this tool');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Audio URL is required for this tool', { itemIndex: i });
                         body.audio_url = audioUrl;
                     }
                     options.method = 'POST';
@@ -2273,7 +2274,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const jobId = this.getNodeParameter('aiVideoJobId', i) || '';
                     if (!jobId)
-                        throw new Error('Job ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Job ID is required', { itemIndex: i });
                     options.method = 'GET';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/ai/jobs/${jobId}`;
                 }
@@ -2281,7 +2282,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const jobId = this.getNodeParameter('aiVideoJobId', i) || '';
                     if (!jobId)
-                        throw new Error('Job ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Job ID is required', { itemIndex: i });
                     options.method = 'DELETE';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/ai/jobs/${jobId}`;
                 }
@@ -2305,7 +2306,7 @@ class ContentStudio {
                     const logo = this.getNodeParameter('wsLogo', i);
                     const timezone = this.getNodeParameter('wsTimezone', i);
                     if (!name || !logo || !timezone) {
-                        throw new Error('Name, Logo URL and Timezone are required to create a workspace');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Name, Logo URL and Timezone are required to create a workspace', { itemIndex: i });
                     }
                     const body = { name, logo, timezone };
                     const superAdminId = this.getNodeParameter('wsSuperAdminId', i);
@@ -2348,7 +2349,7 @@ class ContentStudio {
                         body.first_day = { day: firstDay, key: WEEK_DAYS.indexOf(firstDay) };
                     }
                     if (Object.keys(body).length === 0) {
-                        throw new Error('Provide at least one field to update');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Provide at least one field to update', { itemIndex: i });
                     }
                     options.method = 'PUT';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}`;
@@ -2374,7 +2375,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const accountId = this.getNodeParameter('accountId', i);
                     if (!accountId)
-                        throw new Error('Account is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Account is required', { itemIndex: i });
                     options.method = 'DELETE';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/accounts/${accountId}`;
                 }
@@ -2403,9 +2404,9 @@ class ContentStudio {
                     const name = this.getNodeParameter('labelName', i).trim();
                     const color = this.getNodeParameter('labelColor', i);
                     if (!name)
-                        throw new Error('Name is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Name is required', { itemIndex: i });
                     if (!color)
-                        throw new Error('Color is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Color is required', { itemIndex: i });
                     options.method = 'POST';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/labels`;
                     options.body = { name, color };
@@ -2414,7 +2415,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const labelId = this.getNodeParameter('labelId', i).trim();
                     if (!labelId)
-                        throw new Error('Label ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Label ID is required', { itemIndex: i });
                     const name = this.getNodeParameter('labelName', i).trim();
                     const color = this.getNodeParameter('labelColor', i).trim();
                     const body = {};
@@ -2430,7 +2431,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const labelId = this.getNodeParameter('labelId', i).trim();
                     if (!labelId)
-                        throw new Error('Label ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Label ID is required', { itemIndex: i });
                     options.method = 'DELETE';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/labels/${labelId}`;
                 }
@@ -2451,9 +2452,9 @@ class ContentStudio {
                     const name = this.getNodeParameter('campaignName', i).trim();
                     const color = this.getNodeParameter('campaignColor', i);
                     if (!name)
-                        throw new Error('Name is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Name is required', { itemIndex: i });
                     if (!color)
-                        throw new Error('Color is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Color is required', { itemIndex: i });
                     options.method = 'POST';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/campaigns`;
                     options.body = { name, color };
@@ -2462,7 +2463,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const campaignId = this.getNodeParameter('campaignId', i).trim();
                     if (!campaignId)
-                        throw new Error('Campaign ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Campaign ID is required', { itemIndex: i });
                     const name = this.getNodeParameter('campaignName', i).trim();
                     const color = this.getNodeParameter('campaignColor', i).trim();
                     const body = {};
@@ -2478,7 +2479,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const campaignId = this.getNodeParameter('campaignId', i).trim();
                     if (!campaignId)
-                        throw new Error('Campaign ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Campaign ID is required', { itemIndex: i });
                     options.method = 'DELETE';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/campaigns/${campaignId}`;
                 }
@@ -2505,7 +2506,7 @@ class ContentStudio {
                     const mediaUrl = this.getNodeParameter('mediaUrl', i);
                     const folderId = this.getNodeParameter('mediaFolderId', i) || '';
                     if (!mediaUrl)
-                        throw new Error('Media URL is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Media URL is required', { itemIndex: i });
                     options.method = 'POST';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/media`;
                     options.body = { url: mediaUrl };
@@ -2530,8 +2531,8 @@ class ContentStudio {
                     const membership = this.getNodeParameter('teamMembership', i);
                     const email = this.getNodeParameter('teamEmail', i).trim();
                     if (!email)
-                        throw new Error('Email is required');
-                    const permissions = (0, utils_1.parseJsonObject)(this.getNodeParameter('teamPermissions', i));
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Email is required', { itemIndex: i });
+                    const permissions = (0, utils_1.parseJsonObject)(this.getNode(), this.getNodeParameter('teamPermissions', i));
                     const body = { role, membership, email };
                     if (permissions && Object.keys(permissions).length)
                         body.permissions = permissions;
@@ -2543,10 +2544,10 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const memberId = this.getNodeParameter('teamMemberId', i);
                     if (!memberId)
-                        throw new Error('Member ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Member ID is required', { itemIndex: i });
                     const role = this.getNodeParameter('teamRole', i);
                     const membership = this.getNodeParameter('teamMembership', i);
-                    const permissions = (0, utils_1.parseJsonObject)(this.getNodeParameter('teamPermissions', i));
+                    const permissions = (0, utils_1.parseJsonObject)(this.getNode(), this.getNodeParameter('teamPermissions', i));
                     options.method = 'PUT';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/team-members/${memberId}`;
                     options.body = { role, membership, permissions: permissions || {} };
@@ -2555,7 +2556,7 @@ class ContentStudio {
                     const workspaceId = this.getNodeParameter('workspaceId', i);
                     const memberId = this.getNodeParameter('teamMemberId', i);
                     if (!memberId)
-                        throw new Error('Member ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Member ID is required', { itemIndex: i });
                     const confirmed = this.getNodeParameter('teamConfirmed', i);
                     options.method = 'DELETE';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/team-members/${memberId}`;
@@ -2568,7 +2569,7 @@ class ContentStudio {
                     const page = this.getNodeParameter('page', i);
                     const perPage = this.getNodeParameter('perPage', i);
                     if (!postId)
-                        throw new Error('Post ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Post ID is required', { itemIndex: i });
                     options.method = 'GET';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/posts/${postId}/comments`;
                     options.qs = { page, per_page: perPage };
@@ -2580,9 +2581,9 @@ class ContentStudio {
                     const isNote = this.getNodeParameter('commentIsNote', i, false);
                     const mentionedUsersRaw = this.getNodeParameter('commentMentionedUsers', i) || '';
                     if (!postId)
-                        throw new Error('Post ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Post ID is required', { itemIndex: i });
                     if (!commentText)
-                        throw new Error('Comment text is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Comment text is required', { itemIndex: i });
                     options.method = 'POST';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/posts/${postId}/comments`;
                     const body = { comment: commentText };
@@ -2674,11 +2675,11 @@ class ContentStudio {
                         const firstCommentAccountsParam = this.getNodeParameter('firstCommentAccounts', i);
                         firstCommentAccountIds = (0, utils_1.parseAccounts)(firstCommentAccountsParam);
                         if (!firstCommentMessage.trim()) {
-                            throw new Error('First Comment Message is required when Enable First Comment is true');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'First Comment Message is required when Enable First Comment is true', { itemIndex: i });
                         }
                         // First comment accounts required only when content_category is NOT used
                         if (firstCommentAccountIds.length === 0 && !contentCategoryId) {
-                            throw new Error('First Comment Accounts is required when Enable First Comment is true and no Content Category is selected');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'First Comment Accounts is required when Enable First Comment is true and no Content Category is selected', { itemIndex: i });
                         }
                     }
                     const mediaImages = (0, utils_1.parseMediaImages)(mediaImagesParam);
@@ -2692,25 +2693,25 @@ class ContentStudio {
                     const threadsThreadItems = hasThreadsOptions ? parseThreadOptions(threadsOptionsParam, 'multiThreads') : [];
                     // Validate: either accounts or content_category_id must be provided
                     if (accounts.length === 0 && !contentCategoryId) {
-                        throw new Error('Either Accounts or Content Category must be selected');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Either Accounts or Content Category must be selected', { itemIndex: i });
                     }
                     // Content validation - ensure at least one content type is present
                     const hasText = contentText && contentText.trim().length > 0;
                     const hasImages = mediaImages && mediaImages.length > 0;
                     const hasVideo = mediaVideo && mediaVideo.trim().length > 0;
                     if (!hasText && !hasImages && !hasVideo) {
-                        throw new Error('At least one of the following must be provided: Content Text, Media Images, or Media Video');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'At least one of the following must be provided: Content Text, Media Images, or Media Video', { itemIndex: i });
                     }
                     // Validate scheduled date format
                     if (scheduledAt && !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(scheduledAt)) {
-                        throw new Error('Scheduled At must be in format: YYYY-MM-DD HH:MM:SS (e.g., 2025-10-11 11:15:00)');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Scheduled At must be in format: YYYY-MM-DD HH:MM:SS (e.g., 2025-10-11 11:15:00)', { itemIndex: i });
                     }
                     // Validate first comment accounts overlap with main accounts (only if accounts provided)
                     if (hasFirstComment && firstCommentAccountIds.length > 0 && accounts.length > 0) {
                         const mainAccountSet = new Set(accounts);
                         const validCommentAccounts = firstCommentAccountIds.filter(id => mainAccountSet.has(id));
                         if (validCommentAccounts.length === 0) {
-                            throw new Error('First Comment Accounts must include at least one account from the selected main Accounts');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'First Comment Accounts must include at least one account from the selected main Accounts', { itemIndex: i });
                         }
                         // Use only valid overlapping accounts
                         firstCommentAccountIds = validCommentAccounts;
@@ -2719,7 +2720,7 @@ class ContentStudio {
                     if (operation === 'update') {
                         const updatePostId = this.getNodeParameter('updatePostId', i).trim();
                         if (!updatePostId)
-                            throw new Error('Post ID is required to update a post');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Post ID is required to update a post', { itemIndex: i });
                         options.method = 'PUT';
                         options.url = `${baseRoot}/v1/workspaces/${workspaceId}/posts/${updatePostId}`;
                     }
@@ -2780,7 +2781,7 @@ class ContentStudio {
                             const image = String((_a = c === null || c === void 0 ? void 0 : c.image) !== null && _a !== void 0 ? _a : '').trim();
                             const link = String((_b = c === null || c === void 0 ? void 0 : c.link) !== null && _b !== void 0 ? _b : '').trim();
                             if (!image || !link) {
-                                throw new Error(`Carousel card ${idx + 1} requires both Image URL and Destination URL`);
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Carousel card ${idx + 1} requires both Image URL and Destination URL`, { itemIndex: i });
                             }
                             return {
                                 image,
@@ -2790,7 +2791,7 @@ class ContentStudio {
                             };
                         });
                         if (cards.length < 2 || cards.length > 10) {
-                            throw new Error(`Facebook carousel requires between 2 and 10 cards (got ${cards.length})`);
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Facebook carousel requires between 2 and 10 cards (got ${cards.length})`, { itemIndex: i });
                         }
                         const carouselAccountsRaw = this.getNodeParameter('carouselAccounts', i, []);
                         const carouselAccounts = Array.isArray(carouselAccountsRaw)
@@ -2814,7 +2815,7 @@ class ContentStudio {
                         const facebookCollaborators = (0, utils_1.parseCommaSeparated)(this.getNodeParameter('facebookCollaborators', i, ''));
                         if (facebookCollaborators.length > 0) {
                             if (facebookCollaborators.length > 10) {
-                                throw new Error(`Facebook reel collaborators supports at most 10 (got ${facebookCollaborators.length})`);
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Facebook reel collaborators supports at most 10 (got ${facebookCollaborators.length})`, { itemIndex: i });
                             }
                             options.body.facebook_options = options.body.facebook_options || {};
                             options.body.facebook_options.collaborators = facebookCollaborators;
@@ -2826,14 +2827,14 @@ class ContentStudio {
                         const instagramCollaborators = (0, utils_1.parseCommaSeparated)(this.getNodeParameter('instagramCollaborators', i, ''));
                         const instagramTrialReelEnabled = this.getNodeParameter('instagramTrialReelEnabled', i, false);
                         if (instagramCollaborators.length > 0 && instagramTrialReelEnabled) {
-                            throw new Error('Instagram Trial Reel is mutually exclusive with Instagram Collaborators on the same request');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Instagram Trial Reel is mutually exclusive with Instagram Collaborators on the same request', { itemIndex: i });
                         }
                         if (instagramTrialReelEnabled && postType.includes('story')) {
-                            throw new Error('Instagram Trial Reel is mutually exclusive with sharing to Story on the same request');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Instagram Trial Reel is mutually exclusive with sharing to Story on the same request', { itemIndex: i });
                         }
                         if (instagramCollaborators.length > 0) {
                             if (instagramCollaborators.length > 3) {
-                                throw new Error(`Instagram collaborators supports at most 3 (got ${instagramCollaborators.length})`);
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Instagram collaborators supports at most 3 (got ${instagramCollaborators.length})`, { itemIndex: i });
                             }
                             options.body.instagram_options = { collaborators: instagramCollaborators };
                         }
@@ -2847,7 +2848,7 @@ class ContentStudio {
                         }
                     }
                     // Per-platform content overrides (platform_overrides.<platform>.content.{text,post_type,media})
-                    const platformOverrides = (0, utils_1.parseJsonObject)(this.getNodeParameter('platformOverrides', i, '{}'), 'Platform Overrides');
+                    const platformOverrides = (0, utils_1.parseJsonObject)(this.getNode(), this.getNodeParameter('platformOverrides', i, '{}'), 'Platform Overrides');
                     if (Object.keys(platformOverrides).length > 0) {
                         options.body.platform_overrides = platformOverrides;
                     }
@@ -2858,7 +2859,7 @@ class ContentStudio {
                         const linkedinTitle = (this.getNodeParameter('linkedinTitle', i, '') || '').trim();
                         if (linkedinTitle) {
                             if (linkedinTitle.length > 255) {
-                                throw new Error('LinkedIn Title supports at most 255 characters');
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'LinkedIn Title supports at most 255 characters', { itemIndex: i });
                             }
                             linkedinOptions.title = linkedinTitle;
                         }
@@ -2866,17 +2867,17 @@ class ContentStudio {
                         if (linkedinEnablePoll) {
                             const pollQuestion = (this.getNodeParameter('linkedinPollQuestion', i, '') || '').trim();
                             if (!pollQuestion) {
-                                throw new Error('Poll Question is required when LinkedIn Poll is enabled');
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Poll Question is required when LinkedIn Poll is enabled', { itemIndex: i });
                             }
                             if (pollQuestion.length > 140) {
-                                throw new Error('Poll Question supports at most 140 characters');
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Poll Question supports at most 140 characters', { itemIndex: i });
                             }
                             const pollOptions = (0, utils_1.parseCommaSeparated)(this.getNodeParameter('linkedinPollOptions', i, ''));
                             if (pollOptions.length < 2 || pollOptions.length > 4) {
-                                throw new Error(`LinkedIn poll requires between 2 and 4 options (got ${pollOptions.length})`);
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), `LinkedIn poll requires between 2 and 4 options (got ${pollOptions.length})`, { itemIndex: i });
                             }
                             if (pollOptions.some((opt) => opt.length > 30)) {
-                                throw new Error('Each LinkedIn poll option supports at most 30 characters');
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Each LinkedIn poll option supports at most 30 characters', { itemIndex: i });
                             }
                             const pollDuration = this.getNodeParameter('linkedinPollDuration', i, 'ONE_DAY') || 'ONE_DAY';
                             linkedinOptions.poll = {
@@ -2906,7 +2907,7 @@ class ContentStudio {
                         const approversParam = this.getNodeParameter('approvers', i, '');
                         const approvers = (0, utils_1.parseCommaSeparated)(approversParam);
                         if (approvers.length === 0) {
-                            throw new Error('At least one Approver ID is required when Send for Approval is enabled');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'At least one Approver ID is required when Send for Approval is enabled', { itemIndex: i });
                         }
                         const approveOption = this.getNodeParameter('approveOption', i) || 'anyone';
                         const approvalNotes = this.getNodeParameter('approvalNotes', i) || '';
@@ -2922,7 +2923,7 @@ class ContentStudio {
                     const useApprovalWorkflow = this.getNodeParameter('useApprovalWorkflow', i, false);
                     if (useApprovalWorkflow) {
                         if (sendForApproval) {
-                            throw new Error('Use either "Send for Approval" (legacy) or "Use Approval Workflow" — they are mutually exclusive');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Use either "Send for Approval" (legacy) or "Use Approval Workflow" — they are mutually exclusive', { itemIndex: i });
                         }
                         const workflowId = (this.getNodeParameter('approvalWorkflowId', i, '') || '').trim();
                         const workflowAction = operation === 'update'
@@ -2930,10 +2931,10 @@ class ContentStudio {
                             : '';
                         const workflowNotes = (this.getNodeParameter('approvalWorkflowNotes', i, '') || '').trim();
                         if (workflowId && workflowAction) {
-                            throw new Error('Provide exactly one of Approval Workflow (attach) or Workflow Action — not both');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Provide exactly one of Approval Workflow (attach) or Workflow Action — not both', { itemIndex: i });
                         }
                         if (!workflowId && !workflowAction) {
-                            throw new Error('Approval Workflow requires either a workflow to attach or a Workflow Action');
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Approval Workflow requires either a workflow to attach or a Workflow Action', { itemIndex: i });
                         }
                         const approvalWorkflow = workflowId
                             ? { workflow_id: workflowId }
@@ -2968,9 +2969,9 @@ class ContentStudio {
                     const approvalAction = this.getNodeParameter('approvalAction', i);
                     const comment = this.getNodeParameter('approvalComment', i) || '';
                     if (!planId)
-                        throw new Error('Post/Plan ID is required');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Post/Plan ID is required', { itemIndex: i });
                     if (!approvalAction)
-                        throw new Error('Action is required (approve or reject)');
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Action is required (approve or reject)', { itemIndex: i });
                     options.method = 'POST';
                     options.url = `${baseRoot}/v1/workspaces/${workspaceId}/posts/${planId}/approval`;
                     const approvalBody = { action: approvalAction };
@@ -3008,10 +3009,10 @@ class ContentStudio {
                         for (const entity of unresolved) {
                             const platform = platformById.get(entity.id);
                             if (!platform) {
-                                throw new Error(`Account "${entity.id}" is not connected to workspace ${workspaceId}. Select accounts from the dropdown, or pass account IDs returned by Social Account → List.`);
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Account "${entity.id}" is not connected to workspace ${workspaceId}. Select accounts from the dropdown, or pass account IDs returned by Social Account → List.`, { itemIndex: i });
                             }
                             if (!utils_1.SCHEDULING_PLATFORMS.includes(platform)) {
-                                throw new Error(`Account "${entity.id}" is a ${platform} connection, which the best-times analysis does not support. Supported platforms: ${utils_1.SCHEDULING_PLATFORMS.join(', ')}.`);
+                                throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Account "${entity.id}" is a ${platform} connection, which the best-times analysis does not support. Supported platforms: ${utils_1.SCHEDULING_PLATFORMS.join(', ')}.`, { itemIndex: i });
                             }
                             entity.type = platform;
                         }
@@ -3044,7 +3045,7 @@ class ContentStudio {
                     returnData.push({ json: { error: message }, pairedItem: { item: i } });
                     continue;
                 }
-                if (error instanceof n8n_workflow_1.NodeApiError) {
+                if (error instanceof n8n_workflow_1.NodeApiError || error instanceof n8n_workflow_1.NodeOperationError) {
                     throw error;
                 }
                 throw new n8n_workflow_1.NodeApiError(this.getNode(), error, { itemIndex: i });
